@@ -50,6 +50,15 @@ LL p = 1E9 + 7;
 vector<LL> factorials(MAX_N+1,0);
 vector<LL> ifactorials(MAX_N+1,0);
 
+int n = 3;
+REP(i, 1<<n){
+    REP(j, n){
+        // ==1にしない．i & (1 << j) は１が帰ってくるとは限らない．（ビット演算）
+        if(i & (1 << j)){
+
+        }
+    }
+}
 
 LL getPow(LL val, LL n){
     // バイナリ法

@@ -60,6 +60,7 @@ int main(){
         }
     }
 
+    vector<vector<vector<bool>>> isFind(H, vector<vector<bool>>(W, vector<bool>(4, false)));
     vector<pair<int, int>>dirs;
     dirs.push_back({1, 0});
     dirs.push_back({0, 1});
@@ -68,7 +69,10 @@ int main(){
 
     deque<tuple<int, int, int, int>> routes;
     int ans = -1;
-    routes.push_back({rs-1, cs-1, 0, -1});
+    routes.push_back({rs-1, cs-1, 0, 0});
+    routes.push_back({rs-1, cs-1, 0, 1});
+    routes.push_back({rs-1, cs-1, 0, 2});
+    routes.push_back({rs-1, cs-1, 0, 3});
     while(!routes.empty()){
         auto route = routes.front();routes.pop_front();
         int r = get<0>(route);
@@ -80,6 +84,11 @@ int main(){
             break;
         }
 
+        if(isFind[r][c][dir] == true){
+            continue;
+        }
+        isFind[r][c][dir] = true;
+
         for(auto next: dirs){
             int r_next = next.first + r;
             int c_next = next.second + c;
@@ -87,10 +96,6 @@ int main(){
             if(canMove(r_next, c_next, maze) == false){continue;}
 
             int next_dir = getDir(next.first, next.second);
-            if(dir == -1){
-                routes.push_front({r_next, c_next, p, next_dir});
-                continue;
-            }
 
             if(dir != next_dir){
                 routes.push_back({r_next, c_next, p + 1, next_dir});

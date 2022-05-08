@@ -20,10 +20,13 @@ int M = 5001;
 int calcAccum2DSum(vector<vector<LL>> &mat, int x, int y, int K)
 {
 
-    int max_x = min({M, x + K});
-    int max_y = min({M, y + K});
+    int r_x = min({M-1, x + K});
+    int r_y = min({M-1, y + K});
+    // cout << r_x << ", " << r_y << ", " << x << ", " << y << endl;
 
-    return mat[max_x][max_y] - mat[max_x][y - 1] - mat[x - 1][max_y] + mat[x - 1][y - 1];
+    // return mat.at(r_x).at(r_y) - mat.at(r_x).at(y-1) - mat.at(x-1).at(r_y) + mat.at(x-1).at(y-1);
+
+    return mat[r_x][r_y] - mat[r_x][y - 1] - mat[x - 1][r_y] + mat[x - 1][y - 1];
 }
 
 int main(){
@@ -31,12 +34,10 @@ int main(){
     cin >> N >> K;
 
     vector<vector<LL>> memos(M, vector<LL>(M, 0));
-    vector<pair<int,int>> students(N);
     REP(i, N){
         int a, b;
         cin >> a >> b;
         memos[a][b] += 1;
-        students[i] = {a, b};
     }
 
     REP(i, M){
@@ -53,11 +54,12 @@ int main(){
 
 
     int count = 0;
-    REP(i, N){
-        int x = students[i].first;
-        int y = students[i].second;
-        int _count = calcAccum2DSum(memos, x, y, K);
-        chmax(count, _count);
+    FOR(x, 1, M){
+        FOR(y, 1, M){
+            int _count = calcAccum2DSum(memos, x, y, K);
+            chmax(count, _count);
+            // cout << count << endl;
+        }
     }
  
 
