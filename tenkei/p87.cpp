@@ -18,6 +18,7 @@ template<typename T1,typename T2> inline void chmax(T1 &a,T2 b){if(a<b) a=b;}
 
 
 const LL LARGE_COST = 100000001;
+const LL USER_INFINITY = 5000000000LL;
 
 vector<vector<LL>> floyd_warshall(int N, vector<vector<LL>>& routes, LL X){
     vector<vector<LL>> dp(N, vector<LL>(N, LARGE_COST));
@@ -61,8 +62,8 @@ LL findK(int N, vector<vector<LL>>& routes, LL X, LL P){
 
 LL getBorder(LL val, int N, vector<vector<LL>>& routes, LL P){
     LL left = 1LL;
-    LL right = 5000000000LL;
-    LL minx = 5000000000LL;
+    LL right = USER_INFINITY;
+    LL minx = USER_INFINITY;
 
     while(right - left > 1LL){
         LL mid = (left + right) / 2LL;
@@ -83,7 +84,7 @@ int main(){
     int N;
     LL P, K;
     cin >> N >> P >> K;
-    vector<vector<LL>> A(N, vector<LL>(N, 0));
+    vector<vector<LL>> A(N, vector<LL>(N, 0LL));
     REP(i, N){
         REP(j, N){
             cin >> A[i][j];
@@ -93,30 +94,33 @@ int main(){
     // LL k = findK(N, A, 3, P);
     // cout << k << endl;
 
-    // 条件を満たす経路数がKより小さいときのX
-    LL num1 = getBorder(K, N, A, P);
+    // XはKについて単調減少．Kが大きくなるにつれて，Xは減少する．
+    // 条件を満たす経路数がKとなる最初のX
+    LL left = getBorder(K, N, A, P);
     // cout << num1 << endl;
 
-    // 条件を満たす経路数がK-1より小さいときのX
-    LL num2 = getBorder(K-1, N, A, P);
+    // 条件を満たす経路数がK-1となる最初のX
+    LL right = getBorder(K-1, N, A, P);
     // cout << num2 << endl;
 
-    // if(num2 == 5000000000LL){
-    //     cout << "Infinity" << endl;
-    //     return 0;
-    // }
 
-    // if(num1 == 5000000000LL){
-    //     cout << "Infinity" << endl;
-    //     return 0;
-    // }
 
-    if(num2 - num1 >= 2000000000LL){
+    if(left == USER_INFINITY && right == USER_INFINITY){
+        cout << 0 << endl;
+        return 0;
+    }
+
+    if(right == USER_INFINITY){
         cout << "Infinity" << endl;
         return 0;
     }
 
-    LL ans = num2 - num1;
+    // if(num2 - num1 >= 2000000000LL){
+    //     cout << "Infinity" << endl;
+    //     return 0;
+    // }
+
+    LL ans = right - left;
     cout << ans << endl;
 
     return 0;
