@@ -41,6 +41,9 @@ struct UnionFind {
     }
 };
 
+// string -> number
+string S = "123";
+int num = stoi(S);
 
 auto comp = [](LL l, LL r){return abs(l)<abs(r);};
 priority_queue<LL, vector<LL>, decltype(comp)> que(comp);
@@ -50,15 +53,77 @@ LL p = 1E9 + 7;
 vector<LL> factorials(MAX_N+1,0);
 vector<LL> ifactorials(MAX_N+1,0);
 
-int n = 3;
-REP(i, 1<<n){
-    REP(j, n){
-        // ==1にしない．i & (1 << j) は１が帰ってくるとは限らない．（ビット演算）
-        if(i & (1 << j)){
+bool exhausticSearch(int n){
+    // ｎまでの全探索
+    REP(i, 1<<n){
+        REP(j, n){
+            // ==1にしない．i & (1 << j) は１が帰ってくるとは限らない．（ビット演算）
+            if((i & (1 << j)) != 0){
+                // jビット目が１でないとき
+            }
 
+            // もし対象iがLLのときは１LLにするのを忘れない！！
+            if((i & (1LL << j)) != 0){
+                // jビット目が１でないとき
+            }
         }
     }
+    return true;
 }
+
+
+// Sieve of Erastosthenes
+// N以下の素数をすべて列挙する
+// N log log N
+// 約数ならもっと高速化できる
+vector<LL> getPrimeNumbers(LL N){
+    vector<bool> isPrime(N+1, true);
+    isPrime[0] = false;
+    isPrime[1] = false;
+
+    for(LL p=2; p*p <= N; ++p){
+        if(isPrime[p] == true){
+            for(LL j=2; p*j <= N; ++j){
+                isPrime[p*j] = false;
+            }
+        }
+    }
+
+
+    vector<LL> primes;
+    REP(i, N+1){
+        if(isPrime[i] == true){
+            primes.push_back(i);
+        }
+    }
+    
+    return primes;
+}
+
+
+// 素因数分解
+// O(sqrt N)
+vector<pair<LL, LL>> prime_factorize(LL N) {
+    vector<pair<LL, LL> > res;
+    for (LL p = 2; p * p <= N; ++p) {
+        if (N % p != 0) continue;
+        LL ex = 0; // 指数
+
+        // 割れる限り割り続ける
+        while (N % p == 0) {
+            ++ex;
+            N /= p;
+        }
+
+        // その結果を push
+        res.push_back({p, ex});
+    }
+
+    // 最後に残った数について
+    if (N != 1) res.push_back({N, 1});
+    return res;
+}
+
 
 LL getPow(LL val, LL n){
     // バイナリ法
@@ -109,7 +174,7 @@ LL gcd(LL a, LL b){
   参照：https://algo-logic.info/segment-tree/
 */
 template <typename T>
-struct RMQ{
+struct RMaxQ{
     const T INIT_VALUE = -1;
     int n; // 葉の数
     vector<T> dat; // 完全二分木の配列
@@ -160,3 +225,23 @@ struct RMQ{
         }
     }
 };
+
+//modintの使い方
+#include <atcoder/modint>
+using namespace atcoder;
+using mint = modint1000000007;
+
+mint val = mint(2).pow(300);
+
+void padding(){
+    // 0padding
+    int M = 3;
+    cout << setfill('0') << right << setw(2) << M << endl;
+}
+
+void gridSearch(){
+    vector<pair<int, int>> dirs = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+    for(auto dir: dirs){
+        
+    }
+}
