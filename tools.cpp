@@ -41,10 +41,27 @@ struct UnionFind {
     }
 };
 
+
+// ランレングス圧縮
+void rle(string s, vector<pair<char, int>> &vec)
+{
+  int cnt = 0;
+  for(int i = 0; i < (int)s.size(); i++){
+    if(i != 0 && s[i] != s[i-1]){
+      vec.push_back({s[i-1], cnt + 1});
+      cnt = 0;
+      continue;
+    }
+    cnt++;
+  }
+  vec.push_back({s.back(), cnt + 1});
+}
+
 // string -> number
 string S = "123";
 int num = stoi(S);
 
+// 引数 l が優先度の低い要素であるときに true を返却
 auto comp = [](LL l, LL r){return abs(l)<abs(r);};
 priority_queue<LL, vector<LL>, decltype(comp)> que(comp);
 
