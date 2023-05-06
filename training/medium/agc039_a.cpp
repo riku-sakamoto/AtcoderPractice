@@ -23,7 +23,7 @@ template <class T> inline void out(T a){cout << a << endl;}
 
 LL counting(string& S, vector<bool>& changed, bool last_changed){
     LL count = 0LL;
-    REP(i, S.size() - 1){
+    REP(i, S.size()){
         int pre_i = i - 1;
         if(i == 0){
             pre_i = (int)(S.size()) - 1;
@@ -50,16 +50,16 @@ int main(){
     LL ans = 0LL;
 
     vector<bool> changed(S.size(), false);
-    LL count = counting(S, changed, false);
+    LL count = counting(S, changed, true);
     if (K == 1LL){
         cout << count << endl;
         return 0;
     }
+
     bool last_changed = changed[S.size() - 1];
     REP(i, S.size()){
         changed[i] = false;
     }
-
     LL count_2 = counting(S, changed, last_changed);
 
     if(last_changed == changed[S.size() - 1]){
@@ -71,7 +71,6 @@ int main(){
         ans += count_2 * n_even;
 
     }
-
     cout << ans << endl;
     return 0;
 }
