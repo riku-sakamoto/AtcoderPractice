@@ -49,17 +49,6 @@ template<typename T> inline void out_vector(vector<T>& vec){
     REP(i, vec.size()){cout << vec[i] << " ";}
     cout << endl;
 }
-const LL INF = 1LL << 60;
-struct Edge {
-    int to;
-    LL w;
-    Edge(int to, LL w): to(to), w(w) {}
-};
-using Graph = vector<vector<Edge>>;
-#include <atcoder/modint>
-using namespace atcoder;
-using mint = modint;
-
 template <typename T> struct Matrix {
     vector<vector<T>> _array;
     int _Nr;
@@ -105,7 +94,7 @@ template <typename T> struct Matrix {
     void show(){
         REP(i, _Nr){
             REP(j, _Nc){
-                cout << _array[i][j].val() << " ";
+                cout << _array[i][j] << " ";
             }
             cout << endl;
         }
@@ -123,29 +112,15 @@ template <typename T> T calcPow(T& val, LL n, T& init_val){
     }
     return ans;
 };
+struct Edge {
+    int to;
+    LL w;
+    Edge(int to, LL w): to(to), w(w) {}
+};
+using Graph = vector<vector<Edge>>;
+const LL INF = 1LL << 60;
 
 
 int main(){
-    LL A, X, M;
-    cin >> A >> X >> M;
-    mint::set_mod(M);
-
-    Matrix<mint> mat(2, 2);
-    mat[0][0] = mint(A);
-    mat[0][1] = mint(1LL);
-    mat[1][1] = mint(1LL);
-
-    Matrix<mint> eye(2, 2);
-    eye.to_eye();
-
-    auto pmat = calcPow(mat, X - 1LL, eye);
-    // pmat.show();
-    Matrix<mint> init_state(2, 1);
-    init_state[0][0] = mint(1LL);
-    init_state[1][0] = mint(1LL);
-    auto val = pmat * init_state;
-
-    auto ans = val[0][0].val();
-    out(ans);
     return 0;
 }
