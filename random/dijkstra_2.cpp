@@ -16,7 +16,7 @@ typedef long long LL;
 template<typename T1,typename T2> inline void chmin(T1 &a,T2 b){if(a>b) a=b;}
 template<typename T1,typename T2> inline void chmax(T1 &a,T2 b){if(a<b) a=b;}
 
-// Dijkstra Methods O(V2)
+// Dijkstra Methods O(VlogE)
 
 // 4 6 0
 // 0 1 2
@@ -56,7 +56,7 @@ int main(){
     que.push({0, s});
     dist[s] = 0;
 
-    REP(itr, N){
+    while(!que.empty()){
         // 未探索のノードの内最小距離のノードを探す
         auto p = que.top(); que.pop();
         int min_v = p.second;

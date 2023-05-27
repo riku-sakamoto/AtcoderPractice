@@ -8,12 +8,81 @@ using namespace std;
 typedef long long LL;
 #define REP(i,n) for(int i=0;i<(n);i++)
 #define FOR(i,a,b) for(int i=(a);i<(b);++i)
+#define REPREV(i,n) for(int i=(n-1);i>=(0);--i)
 template<typename T1,typename T2> inline void chmin(T1 &a,T2 b){if(a>b) a=b;}
 template<typename T1,typename T2> inline void chmax(T1 &a,T2 b){if(a<b) a=b;}
+const int inf = INT_MAX / 2;
+
+//modintの使い方
+#include <atcoder/modint>
+using namespace atcoder;
+using mint = modint1000000007;
+// using mint = modint;
+// mint::set_mod(M)
+// or: typedef modint mint;
+
+mint val = mint(2).pow(300);
 
 int main(){
     
 }
+
+template<typename T> T ceiling(T a, T m){return (a + m - 1) / m;}
+
+
+struct StringDecorator
+{
+    string S;
+    int N;
+    // rights[i][j]: the index where i-th char exists larger than j-th index
+    vector<vector<int>> rights;
+
+    // lefts[i][j]: the index where i-th char exists smaller than j-th index
+    vector<vector<int>> lefts;
+
+    // before initialization, converting to each char in s to int
+    // example: for(auto& c: s){c -= '0'} or {c -= 'a'};
+    StringDecorator(string s){
+        S = s; N = s.size();
+        rights = vector<vector<int>>(26, vector<int>(N));
+        lefts = vector<vector<int>>(26, vector<int>(N));
+        initialize_position();
+    }
+    void initialize_position(){
+        // num. of alphabets is 26.
+        // initialize last index and first index;
+        REP(c, 26){rights[c][N - 1] = inf; lefts[c][0] = -1;};
+        REPREV(i, N - 1){
+            REP(c, 26){rights[c][i] = rights[c][i + 1];}
+            rights[S[i + 1]][i] = i + 1;
+        }
+        FOR(i, 1, N){
+            REP(c, 26){lefts[c][i] = lefts[c][i - 1];}
+            lefts[S[i - 1]][i] = i - 1;
+        }
+    }   
+
+    // search index of c larger than idx
+    int search_right(int c, int idx){
+        if(idx == inf){return inf;}
+        if(idx < 0){
+            if(S[0] == c){return 0;}
+            idx = 0;
+        }
+        return rights[c][idx];
+    }
+
+    int search_left(int c, int idx){
+        if(idx == -1){return -1;}
+        if(idx == N){
+            if(S[N - 1] == c){return N - 1;}
+            idx = N - 1;
+        }
+        return lefts[c][idx];
+    }
+
+};
+
 
 struct UnionFind {
     vector<int> par; // par[i]:iの親の番号　(例) par[3] = 2 : 3の親が2
@@ -43,18 +112,26 @@ struct UnionFind {
 
 
 // ランレングス圧縮
-void rle(string s, vector<pair<char, int>> &vec)
-{
-  int cnt = 0;
-  for(int i = 0; i < (int)s.size(); i++){
-    if(i != 0 && s[i] != s[i-1]){
-      vec.push_back({s[i-1], cnt + 1});
-      cnt = 0;
-      continue;
+void rle_compress(string s, vector<pair<char, int>> &vec){
+    int count = 0;
+    char pre;
+    for(int i = 0; i < (int)s.size(); ++i){
+        if(i == 0){
+            pre = s[i];
+            count += 1;
+            continue;
+        }
+
+        if(pre == s[i]){
+            ++count;
+        }else{
+            vec.push_back({pre, count});
+            pre = s[i];
+            count = 1;
+        }
     }
-    cnt++;
-  }
-  vec.push_back({s.back(), cnt + 1});
+    vec.push_back({pre, count});
+    return;
 }
 
 // string -> number
@@ -142,37 +219,20 @@ vector<pair<LL, LL>> prime_factorize(LL N) {
 }
 
 
-LL getPow(LL val, LL n){
-    // バイナリ法
-    LL ans = 1;
-    while(n > 0){
-        ans = ans % p;
-        if((n & 1) == 1){
-            ans = (ans * (val%p)) % p;
-        }
-        val = ((val%p) * (val%p))%p;
-        n = n >> 1;
-    }
-    return ans%p;
-}
+// LL getPow(LL val, LL n){
+//     // バイナリ法
+//     LL ans = 1;
+//     while(n > 0){
+//         ans = ans % p;
+//         if((n & 1) == 1){
+//             ans = (ans * (val%p)) % p;
+//         }
+//         val = ((val%p) * (val%p))%p;
+//         n = n >> 1;
+//     }
+//     return ans%p;
+// }
 
-LL combination(LL n, LL k){
-    if(k==0){return 1;}
-    LL val1 = factorials[n];
-    LL val2 = ifactorials[k]; //getPow(factorials[k], p-2);
-    LL val3 = ifactorials[n-k]; //getPow(factorials[n-k], p-2);
-    
-    return ((val1 * val2)%p * val3)%p;
-}
-
-LL permutation(LL n, LL k){
-    if(k==0){return 1;}
-    LL val1 = factorials[n];
-    // LL val2 = getPow(factorials(k), p-2);
-    LL val3 = ifactorials[n-k]; //getPow(factorials[n-k], p-2);
-
-    return ((val1 * val3)%p);
-}
 
 LL gcd(LL a, LL b){
     LL min_p = min({a, b});
@@ -184,6 +244,51 @@ LL gcd(LL a, LL b){
 
     return gcd(min_p, max_p%min_p);
 }
+
+class PermutationMath {
+    private:
+        int _N;
+        LL _M;
+    // k ^ -1 = k ^ (M - 2) (mod M)
+    public:
+        vector<mint> factorials;
+        // k! ^ (M - 2)
+        vector<mint> ifactorials;
+        PermutationMath(int _N, LL _M);
+        mint combination(LL N, LL k);
+        mint permutation(LL N, LL k);
+};
+
+PermutationMath::PermutationMath(int _N, LL _M){
+    _N = _N;
+    _M = _M;
+    factorials = vector<mint>(_N);
+    ifactorials = vector<mint>(_N);
+    REP(i, _N){
+        if (i == 0){
+            factorials[i] = mint(1);
+            ifactorials[i] = mint(1);
+            continue;
+        }
+        factorials[i] = mint(i) * factorials[i - 1];
+        ifactorials[i] = factorials[i].pow(_M - 2LL);
+    }
+}
+mint PermutationMath::combination(LL n, LL k){
+    if(k==0){return 1;}
+    auto val1 = factorials[n];
+    auto val2 = ifactorials[k];
+    auto val3 = ifactorials[n-k];
+    return val1 * val2 * val3;
+}
+mint PermutationMath::permutation(LL n, LL k){
+    if(k==0){return 1;}
+    mint val1 = factorials[n];
+    mint val3 = ifactorials[n-k];
+    return val1 * val3;
+
+}
+
 
 /* RMQ: [0, n-1]について区間ごとの最大値を管理する
   update(i, x): i番目の要素をｘに更新（logN）
@@ -243,12 +348,6 @@ struct RMaxQ{
     }
 };
 
-//modintの使い方
-#include <atcoder/modint>
-using namespace atcoder;
-using mint = modint1000000007;
-
-mint val = mint(2).pow(300);
 
 void padding(){
     // 0padding
@@ -262,3 +361,65 @@ void gridSearch(){
         
     }
 }
+
+void maze_search(){
+    // up_down * 2, left_right * 2, 斜め右 * 2, 斜め左 * 2
+    vector<int> dirx = {0, 0, 1, -1, 1, -1, 1, -1};
+    vector<int> diry = {1, -1, 0, 0, 1, -1, -1, 1};
+    int i = 0;
+    int j = 0;
+    // k = 移動の種類数
+    REP(k, 8){
+        REP(t, 5){
+            auto ni = i + dirx[k] * t;
+            // check_in 
+        }
+        
+    }
+}
+
+// ダブリング
+
+// 対象が複数の場合
+// dp[p][i] : i番目の情報が2^p回移動した先の情報
+// dp[p + 1][i] = dp[p][dp[p][i]]
+// 2^(p+1) = 2^p * 2^p
+
+
+
+// string
+
+// substr(index, count) なことに注意．（countなのでスライスではない）
+
+string str_slice(int i, int j, string& S){
+    int n = j - i;
+    return S.substr(i, n);
+}
+
+
+// Example 尺取り法
+
+void solve(){
+    // semi-open range
+    int start = 0;
+    int end = 0;
+    int N = 10;
+    vector<int> A(N);
+    LL ans;
+    // threshold
+    LL K = 0LL;
+    LL tmp_sum = 0LL;
+    REP(start, N){
+        while(end < N && tmp_sum < K){
+            tmp_sum += A[end];
+            ++end;
+        }
+
+        if(tmp_sum < K){
+            break;
+        }
+        ans += (N - end + 1);
+        tmp_sum -= A[start];
+    }
+}
+

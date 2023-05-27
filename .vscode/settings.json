@@ -7,6 +7,8 @@
         "list": "cpp",
         "vector": "cpp",
         "string_view": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "iomanip": "cpp",
+        "random": "cpp"
     }
 }
