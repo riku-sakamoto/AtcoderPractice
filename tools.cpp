@@ -302,7 +302,7 @@ struct RMaxQ{
     vector<T> dat; // 完全二分木の配列
     // メンバイニシャライザ
     // 全体の要素数は2n-1。4n_あれば十分。
-    RMQ(int n_): n(), dat(n_*4, INIT_VALUE) {
+    RMaxQ(int n_): n(), dat(n_*4, INIT_VALUE) {
         // 葉の数は 2^x の形
         int x = 1;
         while(n_ > x){
@@ -376,6 +376,40 @@ void maze_search(){
         }
         
     }
+}
+
+
+int maze_solve(vector<vector<char>>& maze, int is, int js, int ie, int je){
+    int H, W;
+    vector<pair<int, int>> moves = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+
+    queue<tuple<int, int, int>> pos;
+    // 登録済みの記憶
+    vector<vector<bool>> seen(H, vector<bool>(W,false));
+    pos.push({is, js, 0});
+    seen[is][js] = true;
+    while (!pos.empty())
+    {
+        auto v = pos.front(); pos.pop();
+        for(auto p: moves){
+            int i, j, point;
+            tie(i, j, point) = v;
+            if(i == ie && j == je){
+                return point;
+            }
+
+            int i_n = i + p.first;
+            int j_n = j + p.second;
+            if(i_n >= 0 && i_n < H && j_n >= 0 && j_n < W){
+                if(seen[i_n][j_n]){continue;}
+                if(maze[i_n][j_n] == '#'){continue;}
+                pos.push({i_n, j_n, point + 1});
+                // que にいれた時点で登録する
+                seen[i_n][j_n] = true;
+            }
+        }
+    }
+    return 0;
 }
 
 // ダブリング

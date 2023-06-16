@@ -9,6 +9,7 @@
         "string_view": "cpp",
         "iostream": "cpp",
         "iomanip": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "string": "cpp"
     }
 }
