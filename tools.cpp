@@ -112,7 +112,8 @@ struct UnionFind {
 
 
 // ランレングス圧縮
-void rle_compress(string s, vector<pair<char, int>> &vec){
+vector<pair<char, int>> rle_compress(string s){
+    vector<pair<char, int>> vec;
     int count = 0;
     char pre;
     for(int i = 0; i < (int)s.size(); ++i){
@@ -131,7 +132,7 @@ void rle_compress(string s, vector<pair<char, int>> &vec){
         }
     }
     vec.push_back({pre, count});
-    return;
+    return vec;
 }
 
 // string -> number
@@ -262,9 +263,9 @@ class PermutationMath {
 PermutationMath::PermutationMath(int _N, LL _M){
     _N = _N;
     _M = _M;
-    factorials = vector<mint>(_N);
-    ifactorials = vector<mint>(_N);
-    REP(i, _N){
+    factorials = vector<mint>(_N + 1);
+    ifactorials = vector<mint>(_N + 1);
+    REP(i, _N + 1){
         if (i == 0){
             factorials[i] = mint(1);
             ifactorials[i] = mint(1);
@@ -275,14 +276,14 @@ PermutationMath::PermutationMath(int _N, LL _M){
     }
 }
 mint PermutationMath::combination(LL n, LL k){
-    if(k==0){return 1;}
+    if(k==0LL){return mint(1LL);}
     auto val1 = factorials[n];
     auto val2 = ifactorials[k];
     auto val3 = ifactorials[n-k];
     return val1 * val2 * val3;
 }
 mint PermutationMath::permutation(LL n, LL k){
-    if(k==0){return 1;}
+    if(k==0LL){return mint(1LL);}
     mint val1 = factorials[n];
     mint val3 = ifactorials[n-k];
     return val1 * val3;
