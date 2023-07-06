@@ -119,29 +119,48 @@ using Graph = vector<vector<Edge>>;
 const LL INF = 1LL << 60;
 const int inf = INT_MAX / 2;
 
+int N;
+
+void dfs(int l, int r, int l_f, int r_f){
+    int k = (l + r) / 2;
+    cout << k << endl; cout << flush;
+    string s; cin >> s;
+    if(s == "Vacant"){exit(0);}
+
+    int m = (s == "Male")? 0: 1;
+    if(abs(l - k) % 2 == 0){
+        if(m == l_f){
+            dfs(k, r, m, r_f);
+        }else{
+            dfs(l, k, l_f, m);
+        }
+    }else{
+        if(m == l_f){
+            dfs(l, k, l_f, m);
+        }else{
+            dfs(k, r, m, r_f);
+        }
+    }
+}
 
 int main(){
-    int H, W, A, B;
-    cin >> H >> W >> A >> B;
+    cin >> N;
+    int l = 0;
+    int r = N - 1;
 
-    vector<vector<int>> maze(H, vector<int>(W, 0));
-    REP(i, H - B){
-        REP(j, A){
-            maze[i][j] = 1;
-        }
+    cout << l << endl; cout << flush;
+    string s; cin >> s;
+    if(s == "Vacant"){exit(0);}
+    int ml = (s == "Male")? 0: 1;
+
+    cout << r << endl; cout << flush;
+    cin >> s;
+    if(s == "Vacant"){exit(0);}
+    int mr = (s == "Male")? 0: 1;
+
+    REP(c, 18){
+        dfs(l, r, ml, mr);
     }
 
-    FOR(i, H - B, H){
-        FOR(j, A, W){
-            maze[i][j] = 1;
-        }
-    }
-
-    REP(i, H){
-        REP(j, W){
-            cout << maze[i][j];
-        }
-        cout << endl;
-    }
     return 0;
 }

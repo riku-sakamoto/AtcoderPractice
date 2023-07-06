@@ -121,27 +121,19 @@ const int inf = INT_MAX / 2;
 
 
 int main(){
-    int H, W, A, B;
-    cin >> H >> W >> A >> B;
+    int N; cin >> N;
+    vector<LL> A(N); REP(i, N){cin >> A[i];}
 
-    vector<vector<int>> maze(H, vector<int>(W, 0));
-    REP(i, H - B){
-        REP(j, A){
-            maze[i][j] = 1;
+    LL ans = 0LL;
+    LL tmp = 0LL;
+    REP(i, N){
+        if(A[i] == 0LL){
+            ans += tmp / 2LL; tmp = 0LL; continue;
         }
-    }
 
-    FOR(i, H - B, H){
-        FOR(j, A, W){
-            maze[i][j] = 1;
-        }
+        tmp += A[i];
     }
-
-    REP(i, H){
-        REP(j, W){
-            cout << maze[i][j];
-        }
-        cout << endl;
-    }
+    ans += tmp / 2LL;
+    out(ans);
     return 0;
 }

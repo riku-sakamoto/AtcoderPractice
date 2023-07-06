@@ -16,8 +16,8 @@ typedef long long LL;
 #define BIT(x,i)(((x)>>(i))&1)
 template<typename T1,typename T2> inline void chmin(T1 &a,T2 b){if(a>b) a=b;}
 template<typename T1,typename T2> inline void chmax(T1 &a,T2 b){if(a<b) a=b;}
-void yes() {cout << "Yes" << endl;}
-void no() {cout << "No" << endl;}
+void yes() {cout << "YES" << endl;}
+void no() {cout << "NO" << endl;}
 template <class T> inline void out(T a){cout << a << endl;}
 template<typename T> int larger_equal(vector<T>& vec, T val){
     auto ptr = lower_bound(ALL(vec), val);
@@ -121,27 +121,34 @@ const int inf = INT_MAX / 2;
 
 
 int main(){
-    int H, W, A, B;
-    cin >> H >> W >> A >> B;
+    int N, M; cin >> N >> M;
+    vector<pair<int, int>> query(M);
+    REP(i, M){
+        int a, b; cin >> a >> b;
+        if(a < b){
+            query[i] = {a, b};
+        }else{
+            query[i] = {b, a};
+        }
+        
+    }
 
-    vector<vector<int>> maze(H, vector<int>(W, 0));
-    REP(i, H - B){
-        REP(j, A){
-            maze[i][j] = 1;
+    map<int, int> counts;
+    REP(i, M){
+        auto p = query[i];
+        if(p.first == 1){
+            counts[p.second] += 1;
+        }else{
+            counts[p.first] += 1;
+            counts[p.second] += 1;
         }
     }
 
-    FOR(i, H - B, H){
-        FOR(j, A, W){
-            maze[i][j] = 1;
+    for(auto k: counts){
+        if(k.second % 2 == 1){
+            no(); return 0;
         }
     }
-
-    REP(i, H){
-        REP(j, W){
-            cout << maze[i][j];
-        }
-        cout << endl;
-    }
+    yes();
     return 0;
 }

@@ -122,11 +122,75 @@ const int inf = INT_MAX / 2;
 
 int main(){
     int H, W; cin >> H >> W;
-    vector<vector<char>> matrix(H, vector<char>(W));
+    vector<vector<char>> maze(H, vector<char>(W));
     REP(i, H){
         REP(j, W){
-            cin >> matrix[i][j];
+            cin >> maze[i][j];
         }
     }
+    map<char, int> char_counts;
+    REP(i, H){
+        REP(j, W){
+            char_counts[maze[i][j]] += 1;
+        }
+    }
+
+    priority_queue<pair<int, char>> que;
+    for(auto p: char_counts){
+        que.push({p.second, p.first});
+    }
+
+    map<int, int> counts;
+    while(H > 0 && W > 0){
+        if(H == 1 && W == 1){
+            counts[1] += 1; break;
+        }
+        if(H == 1){
+            counts[2] += 1; W -= 2; continue;
+        }
+        if(W == 1){
+            counts[2] += 1; H -= 2; continue;
+        }
+
+        if(H == 2 && W == 2){
+            counts[4] += 1; W -= 2; H -= 2; continue;
+        }
+
+        if(H == 2){
+            counts[4] += 1; W -= 2; continue;
+        }
+        if(W == 2){
+            counts[4] += 1; H -= 2; continue;
+        }
+
+        counts[4] += H / 2 + W / 2 - 1;
+        counts[2] += H % 2 + W % 2;
+        H -= 2; W -= 2;
+    }
+
+    // for(auto p: counts){
+    //     cout << p.first << ", " << p.second << endl;
+    // }
+
+    vector<int> keys = {4, 2, 1};
+    while(!que.empty()){
+        auto p = que.top(); que.pop();
+        // cout << p.first << ", " << p.second << endl;
+        for(auto k: keys){
+            if(p.first < k){continue;}
+
+            auto q = min({p.first / k, counts[k]});
+            p.first -= q * k;
+            counts[k] -= q;
+        }
+    }
+
+    for(auto k: keys){
+        if(counts[k] != 0){
+            no(); return 0;
+        }
+    }
+
+    yes();
     return 0;
 }

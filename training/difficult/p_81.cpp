@@ -121,33 +121,25 @@ const int inf = INT_MAX / 2;
 
 
 int main(){
-    int N; LL x; cin >> N >> x;
+    int N; cin >> N; LL x; cin >> x;
     vector<LL> A(N);
-    REP(i, N){cin >> A[i];}
+    REP(i, N){
+        cin >> A[i];
+    }
 
     LL ans = 0LL;
-    REP(i, N){
-        if(i == 0 || i == N - 1){continue;}
-        auto sum1 = A[i] + A[i - 1];
-        auto sum2 = A[i] + A[i + 1];
-        auto diff = max({0LL, sum1 - x, sum2 - x});
-
-        auto delta = min({diff, A[i]});
-        ans += delta;
-        A[i] -= delta;
+    FOR(i, 1, N){
+        auto diff_l = (A[i-1] + A[i]) - x;
+        auto max_diff = max({diff_l, 0LL});
+        auto d = min({A[i], max_diff});
+        ans += d;
+        A[i] -= d;
     }
 
     if(A[0] + A[1] > x){
-        auto diff = A[0] + A[1] - x;
-        auto delta = min({A[0], diff});
-        ans += delta;
-        A[0] -= delta;
-    }
-    if(A[N - 2] + A[N - 1] > x){
-        auto diff = A[N - 1] + A[N - 2] - x;
-        auto delta = min({A[N - 1], diff});
-        ans += delta;
-        A[N - 1] -= delta;
+        auto k = (A[0] + A[1] - x);
+        ans += k;
+        A[0] -= k;
     }
 
     out(ans);
