@@ -120,51 +120,41 @@ const LL INF = 1LL << 60;
 const int inf = INT_MAX / 2;
 
 
-LL gcd(LL a, LL b){
-    LL min_p = min({a, b});
-    LL max_p = max({a, b});
+int calcLIS(vector<int>& vals){
+    int n = vals.size();
+    vector<int> tmpvals(n, inf);
 
-    if(min_p == 0){
-        return max_p;
+    REP(i, n){
+        auto v = vals[i];
+        auto idx = larger_equal(tmpvals, v);
+        if(v < tmpvals[idx]){
+            tmpvals[idx] = v;
+        }
     }
+    // out_vector(tmpvals);
 
-    return gcd(min_p, max_p%min_p);
+    int ans = larger_equal(tmpvals, inf);    
+    return ans;
 }
-
 
 int main(){
     int N; cin >> N;
-    vector<pair<LL, LL>> coins(N);
+    vector<int> A(N);
+    vector<int> B(N);
+    REP(i, N){cin >> A[i];}
+    REP(i, N){cin >> B[i];}
+
+    vector<int> newB(N);
     REP(i, N){
-        LL a, b; cin >> a >> b;
-        coins[i] = {a, b};
+        auto v = B[i];
+        auto idx = A[i] - 1;
+        newB[idx] = v;
     }
 
-    // 引数 l が優先度の低い要素であるときに true を返却
-    auto comp = [](tuple<LL, LL, int> l, tuple<LL, LL, int> r){
-        LL l_a, l_ab; int li;
-        LL r_a, r_ab; int ri;
-        tie(l_a, l_ab, li) = l;
-        tie(r_a, r_ab, ri) = r;
+    // out_vector(newB);
 
-        if(l_a * (r_ab) < r_a * (l_ab)){return true;}
-        if(l_a * (r_ab) > r_a * (l_ab)){return false;}
-        if(li > ri){return true;}
-        return false;
-    };
-    priority_queue<tuple<LL, LL, int>, vector<tuple<LL, LL, int>>, decltype(comp)> que(comp);
-
-    REP(i, N){
-        que.push({coins[i].first, coins[i].first + coins[i].second, i});
-    }
-
-    while(!que.empty()){
-        auto p = que.top(); que.pop();
-        LL l_a, l_ab; int li;
-        tie(l_a, l_ab, li) = p;
-        cout << li + 1 << " "; 
-    }
-    cout << endl;
-
+    auto valA = N;
+    auto valB = calcLIS(newB);
+    out(valA + valB);
     return 0;
 }

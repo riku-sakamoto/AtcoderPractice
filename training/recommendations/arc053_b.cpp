@@ -120,51 +120,29 @@ const LL INF = 1LL << 60;
 const int inf = INT_MAX / 2;
 
 
-LL gcd(LL a, LL b){
-    LL min_p = min({a, b});
-    LL max_p = max({a, b});
-
-    if(min_p == 0){
-        return max_p;
-    }
-
-    return gcd(min_p, max_p%min_p);
-}
-
-
 int main(){
-    int N; cin >> N;
-    vector<pair<LL, LL>> coins(N);
-    REP(i, N){
-        LL a, b; cin >> a >> b;
-        coins[i] = {a, b};
+    string S; cin >> S;
+    int N = S.size();
+    map<char, int>counts;
+    for(auto c: S){
+        counts[c] += 1;
     }
 
-    // 引数 l が優先度の低い要素であるときに true を返却
-    auto comp = [](tuple<LL, LL, int> l, tuple<LL, LL, int> r){
-        LL l_a, l_ab; int li;
-        LL r_a, r_ab; int ri;
-        tie(l_a, l_ab, li) = l;
-        tie(r_a, r_ab, ri) = r;
-
-        if(l_a * (r_ab) < r_a * (l_ab)){return true;}
-        if(l_a * (r_ab) > r_a * (l_ab)){return false;}
-        if(li > ri){return true;}
-        return false;
-    };
-    priority_queue<tuple<LL, LL, int>, vector<tuple<LL, LL, int>>, decltype(comp)> que(comp);
-
-    REP(i, N){
-        que.push({coins[i].first, coins[i].first + coins[i].second, i});
+    int core = 0;
+    int even_pairs = 0;
+    for(auto p: counts){
+        if(p.second % 2 == 1){
+            core += 1;
+        }
+        even_pairs += p.second / 2;
+    }
+    if(core <= 1){
+        out(N); return 0;
     }
 
-    while(!que.empty()){
-        auto p = que.top(); que.pop();
-        LL l_a, l_ab; int li;
-        tie(l_a, l_ab, li) = p;
-        cout << li + 1 << " "; 
-    }
-    cout << endl;
+    auto k = even_pairs / core;
 
+    auto ans = k * 2 + 1;
+    out(ans);
     return 0;
 }

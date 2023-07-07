@@ -120,51 +120,64 @@ const LL INF = 1LL << 60;
 const int inf = INT_MAX / 2;
 
 
-LL gcd(LL a, LL b){
-    LL min_p = min({a, b});
-    LL max_p = max({a, b});
-
-    if(min_p == 0){
-        return max_p;
-    }
-
-    return gcd(min_p, max_p%min_p);
-}
-
-
 int main(){
     int N; cin >> N;
-    vector<pair<LL, LL>> coins(N);
-    REP(i, N){
-        LL a, b; cin >> a >> b;
-        coins[i] = {a, b};
+    vector<int> A(N);
+    REP(i, N){cin >> A[i];}
+    string S; cin >> S;
+
+    vector<vector<int>> pos_M(3, vector<int>(N, 0));
+    vector<vector<int>> pos_X(3, vector<int>(N, 0));
+
+    if(S[0] == 'M'){
+        pos_M[A[0]][0] = 1;
+    }
+    FOR(i, 1, N){
+        REP(j, 3){
+            if(S[i] != 'M'){
+                pos_M[j][i] = pos_M[j][i - 1];
+                continue;
+            }
+            int v = (j == A[i])? 1 : 0;
+            pos_M[j][i] = pos_M[j][i - 1] + v;
+        }
     }
 
-    // 引数 l が優先度の低い要素であるときに true を返却
-    auto comp = [](tuple<LL, LL, int> l, tuple<LL, LL, int> r){
-        LL l_a, l_ab; int li;
-        LL r_a, r_ab; int ri;
-        tie(l_a, l_ab, li) = l;
-        tie(r_a, r_ab, ri) = r;
 
-        if(l_a * (r_ab) < r_a * (l_ab)){return true;}
-        if(l_a * (r_ab) > r_a * (l_ab)){return false;}
-        if(li > ri){return true;}
-        return false;
-    };
-    priority_queue<tuple<LL, LL, int>, vector<tuple<LL, LL, int>>, decltype(comp)> que(comp);
+    if(S[N - 1] == 'X'){
+        pos_X[A[N - 1]][N - 1] = 1;
+    }
+    REPREV(i, N){
+        if(i == N - 1){continue;}
+        REP(j, 3){
+            if(S[i] != 'X'){
+                pos_X[j][i] = pos_X[j][i + 1];
+                continue;
+            }
 
-    REP(i, N){
-        que.push({coins[i].first, coins[i].first + coins[i].second, i});
+            int v = (j == A[i])? 1: 0;
+            pos_X[j][i] = pos_X[j][i + 1] + v;
+        }
     }
 
-    while(!que.empty()){
-        auto p = que.top(); que.pop();
-        LL l_a, l_ab; int li;
-        tie(l_a, l_ab, li) = p;
-        cout << li + 1 << " "; 
+    LL ans = 0LL;
+    FOR(i, 1, N - 1){
+        if(S[i] != 'E'){continue;}
+        auto v = A[i];
+        REP(j, 3){
+            REP(k, 3){
+                auto m = pos_M[j][i - 1];
+                auto x = pos_X[k][i + 1];
+                set<int> vals = {j, k, v};
+                REP(y, 4){
+                    if(vals.find(y) == vals.end()){
+                        ans += (LL)m * (LL)x * (LL)y;
+                        break;
+                    }
+                }
+            }
+        }
     }
-    cout << endl;
-
+    out(ans);
     return 0;
 }
