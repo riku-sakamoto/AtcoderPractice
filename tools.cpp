@@ -234,6 +234,17 @@ vector<pair<LL, LL>> prime_factorize(LL N) {
 //     return ans%p;
 // }
 
+LL extgcd(LL a, LL b, LL x, LL y){
+    if(b == 0LL){
+        x = 1LL; y = 0LL;
+        return a;
+    }
+
+    LL d = extgcd(b, a % b, y, x);
+    y -= (a / b) * x;
+    return d;
+}
+
 
 LL gcd(LL a, LL b){
     LL min_p = min({a, b});
