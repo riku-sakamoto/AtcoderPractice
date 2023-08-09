@@ -10,6 +10,7 @@
         "iostream": "cpp",
         "iomanip": "cpp",
         "random": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "tuple": "cpp"
     }
 }

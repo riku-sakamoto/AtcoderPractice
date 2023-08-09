@@ -234,7 +234,7 @@ vector<pair<LL, LL>> prime_factorize(LL N) {
 //     return ans%p;
 // }
 
-LL extgcd(LL a, LL b, LL x, LL y){
+LL extgcd(LL a, LL b, LL& x, LL& y){
     if(b == 0LL){
         x = 1LL; y = 0LL;
         return a;
@@ -244,7 +244,6 @@ LL extgcd(LL a, LL b, LL x, LL y){
     y -= (a / b) * x;
     return d;
 }
-
 
 LL gcd(LL a, LL b){
     LL min_p = min({a, b});
@@ -328,6 +327,14 @@ struct RMaxQ{
             dat.at(i) = INIT_VALUE;
         }
     }
+
+    void set(int i, T x){dat[i + n - 1] = x;}
+    void build(){
+        for(int k = n - 2; k > 0; --k){
+            dat[k] = max(dat[2 * k + 1], dat[2 * k + 2]);
+        }
+    }
+
 
     void update(int i, T x){
         i += n - 1;
